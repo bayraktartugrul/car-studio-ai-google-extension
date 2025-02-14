@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Log dosyaları
+*.log
+
+# Sıkıştırılmış dosyalar
+*.zip
+
+# Video dosyaları
+*.mp4
+*.mov
+
+# Büyük görsel dosyaları
+images/large/
+backgrounds/large/
+
+# Sistem dosyaları
+.DS_Store
+Thumbs.db
+
+# IDE dosyaları
+.vscode/
+.idea/
+
+# Yapılandırma dosyaları
+config.js
+.env 

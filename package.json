@@ -1,0 +1,18 @@
+{
+  "name": "arac-studyo",
+  "version": "1.0.0",
+  "description": "Araç Stüdyo Extension",
+  "main": "email-service.js",
+  "scripts": {
+    "start": "node email-service.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.21.2",
+    "nodemailer": "^6.9.16"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

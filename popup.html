@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Araç Stüdyo</title>
+    <style>
+        body {
+            width: 300px;
+            padding: 10px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        .studio-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .studio-item {
+            cursor: pointer;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .studio-item:hover {
+            border-color: var(--brand-orange);
+            transform: translateY(-2px);
+        }
+        .studio-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        .studio-item span {
+            display: block;
+            font-size: 14px;
+            color: #444;
+        }
+        .studio-item.active {
+            border-color: var(--brand-orange);
+            background-color: #fff3e6;
+        }
+        .view-toggle {
+            display: none; /* Başlangıçta gizli */
+            justify-content: center;
+            margin: 15px 0;
+            gap: 10px;
+        }
+        .view-toggle button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: #f0f0f0;
+        }
+        .view-toggle button.active {
+            background: var(--brand-orange);
+            color: white;
+        }
+        #status {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+        .initial-message {
+            text-align: center;
+            color: #666;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        :root {
+            --brand-orange: #FF6B00;
+        }
+        .back-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+        .back-button svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--brand-orange);
+        }
+        .back-button:hover {
+            transform: translateX(-3px);
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" id="backToOnboarding">
+        <svg viewBox="0 0 24 24">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+    </button>
+    <h2>Stüdyo Seçimi</h2>
+    <div class="initial-message">Lütfen bir stüdyo seçin</div>
+    <div class="studio-options">
+        <div class="studio-item" data-studio="modern">
+            <img src="backgrounds/bg-1.jpg" alt="Modern Stüdyo">
+            <span>Modern Stüdyo</span>
+        </div>
+        <div class="studio-item" data-studio="classic">
+            <img src="backgrounds/bg-2.jpg" alt="Klasik Stüdyo">
+            <span>Klasik Stüdyo</span>
+        </div>
+        <div class="studio-item" data-studio="dark">
+            <img src="backgrounds/bg-3.jpg" alt="Karanlık Stüdyo">
+            <span>Karanlık Stüdyo</span>
+        </div>
+        <div class="studio-item" data-studio="light">
+            <img src="backgrounds/bg-4.jpg" alt="Aydınlık Stüdyo">
+            <span>Aydınlık Stüdyo</span>
+        </div>
+    </div>
+    <div class="view-toggle">
+        <button id="beforeBtn">Öncesi</button>
+        <button id="afterBtn">Sonrası</button>
+    </div>
+    <div id="status"></div>
+    <script src="popup.js"></script>
+</body>
+</html> 

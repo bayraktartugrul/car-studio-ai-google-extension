@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "Car Background Removel Tool",
+  "short_name": "Car Background Removel",
+  "version": "1.0",
+  "description": "Makes car photos background more professional",
+  "icons": {
+    "48": "icons/favicon.png"
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://*.carstudio.ai/*",
+    "https://tokyo.carstudio.ai/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module",
+    "persistent": true
+  },
+  "web_accessible_resources": [{
+    "resources": [
+      "images/carstudio-ai.gif",
+      "images/*",
+      "backgrounds/*"
+    ],
+    "matches": ["<all_urls>"]
+  }],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icons/favicon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src https://api.carstudio.ai/* https://* http://*;"
+  }
+} 
