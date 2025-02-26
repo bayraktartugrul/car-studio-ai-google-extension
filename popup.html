@@ -1,30 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html style="height: 450px;">
 <head>
     <meta charset="UTF-8">
     <title>Studio Tool</title>
     <style>
-        body {
+        html, body {
             width: 350px;
             height: 450px;
-            max-height: 450px;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
             overflow-y: auto;
             padding: 10px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            margin: 0;
+            box-sizing: border-box;
         }
+
+        .container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
         h2 {
             text-align: center;
             margin-bottom: 20px;
             font-size: 18px;
             color: #333;
         }
+
         .studio-options {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             margin-bottom: 20px;
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 20px;
         }
+
         .studio-item {
             cursor: pointer;
             border: 2px solid #ddd;
@@ -33,10 +50,12 @@
             text-align: center;
             transition: all 0.3s ease;
         }
+
         .studio-item:hover {
             border-color: var(--brand-orange);
             transform: translateY(-2px);
         }
+
         .studio-item img {
             width: 100%;
             height: 80px;
@@ -44,21 +63,29 @@
             border-radius: 4px;
             margin-bottom: 8px;
         }
+
         .studio-item span {
             display: block;
             font-size: 14px;
             color: #444;
         }
+
         .studio-item.active {
             border-color: var(--brand-orange);
             background-color: #fff3e6;
         }
+
         .view-toggle {
-            display: none; /* Başlangıçta gizli */
+            display: none;
             justify-content: center;
             margin: 15px 0;
             gap: 10px;
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 10px 0;
         }
+
         .view-toggle button {
             padding: 8px 20px;
             border: none;
@@ -69,26 +96,34 @@
             transition: all 0.3s ease;
             background: #f0f0f0;
         }
+
         .view-toggle button.active {
             background: var(--brand-orange);
             color: white;
         }
+
         #status {
             text-align: center;
             margin-top: 15px;
             padding: 10px;
             color: #666;
             font-size: 14px;
+            position: sticky;
+            bottom: 0;
+            background: white;
         }
+
         .initial-message {
             text-align: center;
             color: #666;
             margin: 20px 0;
             font-size: 14px;
         }
+
         :root {
             --brand-orange: #FF6B00;
         }
+
         .back-button {
             position: absolute;
             top: 15px;
@@ -99,63 +134,67 @@
             padding: 5px;
             transition: all 0.3s ease;
         }
+
         .back-button svg {
             width: 20px;
             height: 20px;
             fill: var(--brand-orange);
         }
+
         .back-button:hover {
             transform: translateX(-3px);
         }
     </style>
 </head>
-<body style="height: 450px; max-height: 450px; overflow-y: auto;">
-    <button class="back-button" id="backToOnboarding">
-        <svg viewBox="0 0 24 24">
-            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-        </svg>
-    </button>
-    <h2>Studio Selection</h2>
-    <div class="initial-message">Please select a studio</div>
-    <div class="studio-options">
-        <div class="studio-item" data-studio="modern">
-            <img src="backgrounds/bg-1.jpg" alt="Modern Studio">
-            <span>Modern Studio</span>
+<body>
+    <div class="container">
+        <button class="back-button" id="backToOnboarding">
+            <svg viewBox="0 0 24 24">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+        </button>
+        <h2>Studio Selection</h2>
+        <div class="initial-message">Please select a studio</div>
+        <div class="studio-options">
+            <div class="studio-item" data-studio="modern">
+                <img src="backgrounds/bg-1.jpg" alt="Modern Studio">
+                <span>Modern Studio</span>
+            </div>
+            <div class="studio-item" data-studio="classic">
+                <img src="backgrounds/bg-2.jpg" alt="Classic Studio">
+                <span>Classic Studio</span>
+            </div>
+            <div class="studio-item" data-studio="dark">
+                <img src="backgrounds/bg-3.jpg" alt="Dark Studio">
+                <span>Dark Studio</span>
+            </div>
+            <div class="studio-item" data-studio="light">
+                <img src="backgrounds/bg-4.jpg" alt="Light Studio">
+                <span>Light Studio</span>
+            </div>
+            <div class="studio-item" data-studio="vintage">
+                <img src="backgrounds/bg-5.jpg" alt="Vintage Studio">
+                <span>Vintage Studio</span>
+            </div>
+            <div class="studio-item" data-studio="minimalist">
+                <img src="backgrounds/bg-6.jpg" alt="Minimalist Studio">
+                <span>Minimalist Studio</span>
+            </div>
+            <div class="studio-item" data-studio="natural">
+                <img src="backgrounds/bg-7.jpg" alt="Natural Studio">
+                <span>Natural Studio</span>
+            </div>
+            <div class="studio-item" data-studio="elegant">
+                <img src="backgrounds/bg-8.jpg" alt="Elegant Studio">
+                <span>Elegant Studio</span>
+            </div>
         </div>
-        <div class="studio-item" data-studio="classic">
-            <img src="backgrounds/bg-2.jpg" alt="Classic Studio">
-            <span>Classic Studio</span>
+        <div class="view-toggle">
+            <button id="beforeBtn">Before</button>
+            <button id="afterBtn">After</button>
         </div>
-        <div class="studio-item" data-studio="dark">
-            <img src="backgrounds/bg-3.jpg" alt="Dark Studio">
-            <span>Light Studio</span>
-        </div>
-        <div class="studio-item" data-studio="light">
-            <img src="backgrounds/bg-4.jpg" alt="Light Studio">
-            <span>Light Studio</span>
-        </div>
-        <div class="studio-item" data-studio="vintage">
-            <img src="backgrounds/bg-5.jpg" alt="Vintage Studio">
-            <span>Vintage Studio</span>
-        </div>
-        <div class="studio-item" data-studio="minimalist">
-            <img src="backgrounds/bg-6.jpg" alt="Minimalist Studio">
-            <span>Minimalist Studio</span>
-        </div>
-        <div class="studio-item" data-studio="natural">
-            <img src="backgrounds/bg-7.jpg" alt="Natural Studio">
-            <span>Natural Studio</span>
-        </div>
-        <div class="studio-item" data-studio="elegant">
-            <img src="backgrounds/bg-8.jpg" alt="Elegant Studio">
-            <span>Elegant Studio</span>
-        </div>
+        <div id="status"></div>
     </div>
-    <div class="view-toggle">
-        <button id="beforeBtn">Before</button>
-        <button id="afterBtn">After</button>
-    </div>
-    <div id="status"></div>
     <script src="popup.js"></script>
 </body>
 </html> 
