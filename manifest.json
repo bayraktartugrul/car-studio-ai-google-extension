@@ -32,7 +32,9 @@
   }],
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "icons/favicon.png"
+    "default_icon": "icons/favicon.png",
+    "default_width": 350,
+    "default_height": 450
   },
   "content_scripts": [
     {
