@@ -20,9 +20,64 @@ class StudioProcessor {
         console.error('API key bulunamadı!');
     }
 
+    // Lottie animasyonunu önceden yükle
+    this.loadingAnimation = null;
+    this.preloadLoadingAnimation();
+
     this.originalImages = new Map();
     this.detectedImages = new Set(); // Tespit edilen resimleri saklamak için
     this.init();
+  }
+
+  async preloadLoadingAnimation() {
+    try {
+        const response = await fetch(chrome.runtime.getURL('animations/loading.json'));
+        this.loadingAnimation = await response.json();
+        console.log('Loading animasyonu yüklendi');
+    } catch (error) {
+        console.error('Loading animasyonu yüklenemedi:', error);
+    }
+  }
+
+  showLoading(container) {
+    const loadingContainer = document.createElement('div');
+    loadingContainer.className = 'loading-container';
+    loadingContainer.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+    `;
+
+    const animContainer = document.createElement('div');
+    animContainer.id = 'lottie-' + Math.random().toString(36).substr(2, 9);
+    animContainer.style.cssText = `
+        width: 150px;
+        height: 150px;
+    `;
+    loadingContainer.appendChild(animContainer);
+    container.appendChild(loadingContainer);
+
+    if (this.loadingAnimation && typeof lottie !== 'undefined') {
+        const anim = lottie.loadAnimation({
+            container: animContainer,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            animationData: this.loadingAnimation
+        });
+        loadingContainer.animation = anim;
+    } else {
+        animContainer.innerHTML = 'Loading...';
+    }
+
+    return loadingContainer;
   }
 
   init() {
@@ -209,44 +264,9 @@ class StudioProcessor {
 
   async processImage(img, studioType) {
     try {
-        // Loading göster
         const container = img.closest('.studio-container');
-        const loadingContainer = document.createElement('div');
-        loadingContainer.className = 'loading-container';
-        loadingContainer.style.cssText = `
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-        `;
+        const loadingContainer = this.showLoading(container);
 
-        // Lottie animasyon container
-        const animContainer = document.createElement('div');
-        animContainer.id = 'lottie-' + Math.random().toString(36).substr(2, 9);
-        animContainer.style.cssText = `
-            width: 150px;
-            height: 150px;
-        `;
-        loadingContainer.appendChild(animContainer);
-        container.appendChild(loadingContainer);
-
-        // Lottie animasyonunu yükle
-        const animData = await fetch(chrome.runtime.getURL('animations/loading.json')).then(r => r.json());
-        const anim = lottie.loadAnimation({
-            container: animContainer,
-            renderer: 'svg',
-            loop: true,
-            autoplay: true,
-            animationData: animData
-        });
-
-        // API'ye gönder
         const response = await new Promise((resolve, reject) => {
             chrome.runtime.sendMessage({
                 action: 'fetchImage',
@@ -260,18 +280,14 @@ class StudioProcessor {
             });
         });
 
-        // Orijinal resmi sakla
         this.originalImages.set(img, img.cloneNode(true));
-        
-        // Yeni resmi göster
         img.src = response;
-        
-        // Stüdyo arka planını ayarla
         container.style.background = this.backgrounds[studioType];
         container.style.backgroundSize = 'cover';
-        
-        // Animasyonu temizle
-        anim.destroy();
+
+        if (loadingContainer.animation) {
+            loadingContainer.animation.destroy();
+        }
         loadingContainer.remove();
     } catch (error) {
         console.error('İşlem hatası:', error);
