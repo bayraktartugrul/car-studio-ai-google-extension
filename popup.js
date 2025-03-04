@@ -63,9 +63,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     studioType: studioType
                 });
 
-                statusDiv.textContent = 'Stüdyo uygulanıyor...';
+                statusDiv.textContent = 'Applying studio...';
                 setTimeout(() => {
-                    statusDiv.textContent = 'Stüdyo başarıyla uygulandı!';
+                    statusDiv.textContent = 'Studio successfully applied!';
                 }, 1000);
             });
         });
@@ -100,9 +100,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 action: 'sendEmailTest'
             });
             
-            statusDiv.textContent = 'E-posta gönderiliyor...';
+            statusDiv.textContent = 'Sending email...';
             setTimeout(() => {
-                statusDiv.textContent = 'E-posta gönderildi! Lütfen gelen kutunuzu kontrol edin.';
+                statusDiv.textContent = 'Email sent! Please check your inbox.';
             }, 2000);
         });
 

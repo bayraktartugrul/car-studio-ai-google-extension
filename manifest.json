@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Car Background Removel Tool",
-  "short_name": "Car Background Removel",
+  "name": "Car Studio AI | Car Background Removal",
+  "short_name": "Car Studio AI | Car Background Removal",
   "version": "1.0",
-  "description": "Makes car photos background more professional",
+  "description": "Car Studio AI instantly upgrades your car images to studio quality using AI-powered auto-detection and background editing.",
   "icons": {
     "48": "icons/favicon.png"
   },

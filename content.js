@@ -211,7 +211,40 @@ class StudioProcessor {
     try {
         // Loading göster
         const container = img.closest('.studio-container');
-        const loadingDiv = this.showLoading(container);
+        const loadingContainer = document.createElement('div');
+        loadingContainer.className = 'loading-container';
+        loadingContainer.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        `;
+
+        // Lottie animasyon container
+        const animContainer = document.createElement('div');
+        animContainer.id = 'lottie-' + Math.random().toString(36).substr(2, 9);
+        animContainer.style.cssText = `
+            width: 150px;
+            height: 150px;
+        `;
+        loadingContainer.appendChild(animContainer);
+        container.appendChild(loadingContainer);
+
+        // Lottie animasyonunu yükle
+        const animData = await fetch(chrome.runtime.getURL('animations/loading.json')).then(r => r.json());
+        const anim = lottie.loadAnimation({
+            container: animContainer,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            animationData: animData
+        });
 
         // API'ye gönder
         const response = await new Promise((resolve, reject) => {
@@ -237,7 +270,9 @@ class StudioProcessor {
         container.style.background = this.backgrounds[studioType];
         container.style.backgroundSize = 'cover';
         
-        loadingDiv.remove();
+        // Animasyonu temizle
+        anim.destroy();
+        loadingContainer.remove();
     } catch (error) {
         console.error('İşlem hatası:', error);
         this.showError(container, error.message);
