@@ -81,45 +81,57 @@ class StudioProcessor {
     // Mevcut sitenin host adını al
     const currentHost = window.location.hostname.replace('www.', '');
     
-    // AutoScout24 için özel selektörler
-    if (currentHost.includes('autoscout24')) {
-        // Tüm resimleri seç
-        const images = document.querySelectorAll('img');
-        
-        console.log('Bulunan toplam resim sayısı:', images.length);
-        let validImageCount = 0;
+    // Site özel selektörler
+    const coverSelectors = {
+        'autoscout24': 'img',
+        'sahibinden.com': '.classifiedDetailMainPhoto img:first-child, #bigPhotos img:first-child',
+        'arabam.com': '.listing-image-container img, .gallery-view-container img, .listing-item-image img, .image-container img, .classified-detail-image img, .classified-detail-slider img',
+        'cars.com': '.modal-slideshow__image:first-child',
+        'mobile.de': '.gallery-img:first-child',
+        'cars24.com': '.gallery-image img, .car-image img, .vehicle-image img',
+        'facebook.com': 'img[src*="scontent"]'
+    };
 
-        // Her resmi kontrol et
+    // Arabam.com için özel kontrol
+    if (currentHost.includes('arabam.com')) {
+        const images = document.querySelectorAll(coverSelectors['arabam.com']);
+        console.log('Arabam.com resimleri bulundu:', images.length);
+        
         images.forEach(img => {
             if (!this.detectedImages.has(img) && this.isValidCarImage(img)) {
-                validImageCount++;
+                console.log('Arabam.com resmi işleniyor:', img.src);
                 img.classList.add('car-cover-image');
                 this.detectedImages.add(img);
                 this.prepareContainer(img);
             }
         });
+        return;
+    }
 
-        console.log('İşlenebilir resim sayısı:', validImageCount);
-    } else {
-        // Diğer siteler için mevcut selektörler...
-        const coverSelectors = {
-            'sahibinden.com': '.classifiedDetailMainPhoto img:first-child, #bigPhotos img:first-child',
-            'arabam.com': '.gallery-view-container img:first-child',
-            'cars.com': '.modal-slideshow__image:first-child',
-            'mobile.de': '.gallery-img:first-child'
-        };
+    // Cars24 için özel kontrol
+    if (currentHost.includes('cars24.com')) {
+        const images = document.querySelectorAll('.gallery-image img, .car-image img, .vehicle-image img');
+        images.forEach(img => {
+            if (!this.detectedImages.has(img) && this.isValidCarImage(img)) {
+                img.classList.add('car-cover-image');
+                this.detectedImages.add(img);
+                this.prepareContainer(img);
+            }
+        });
+        return;
+    }
 
-        const selector = coverSelectors[currentHost] || 
-            '.vehicle-image img:first-child, .car-gallery img:first-child, .main-photo img:first-child';
+    // Diğer siteler için genel kontrol
+    const selector = coverSelectors[currentHost] || 
+        '.vehicle-image img:first-child, .car-gallery img:first-child, .main-photo img:first-child';
 
-        const coverImage = document.querySelector(selector);
-        
-        if (coverImage && !this.detectedImages.has(coverImage)) {
-            console.log('Kapak resmi tespit edildi:', coverImage.src);
-            coverImage.classList.add('car-cover-image');
-            this.detectedImages.add(coverImage);
-            this.prepareContainer(coverImage);
-        }
+    const coverImage = document.querySelector(selector);
+    
+    if (coverImage && !this.detectedImages.has(coverImage)) {
+        console.log('Kapak resmi tespit edildi:', coverImage.src);
+        coverImage.classList.add('car-cover-image');
+        this.detectedImages.add(coverImage);
+        this.prepareContainer(coverImage);
     }
   }
 
@@ -454,14 +466,33 @@ class StudioProcessor {
         return false;
     }
 
-    // 2. URL kontrolü - AutoScout24'e özel
+    // 2. URL kontrolü - Arabam.com ve diğer siteler için
     const validUrls = [
         'prod.pictures.autoscout24',
+        'arbstorage.mncdn.com',
+        'img.arabam.com',
         'arbstorage.mncdn.com'
     ];
     
-    // Sadece URL kontrolü yap
-    return validUrls.some(domain => img.src.includes(domain));
+    // URL kontrolü
+    if (validUrls.some(domain => img.src.includes(domain))) {
+        return true;
+    }
+
+    // 3. Resim boyutu kontrolü
+    if (img.naturalWidth < 200 || img.naturalHeight < 150) {
+        return false;
+    }
+
+    // 4. Resim container kontrolü
+    const hasValidContainer = img.closest('.listing-image-container') || 
+                            img.closest('.gallery-view-container') ||
+                            img.closest('.listing-item-image') ||
+                            img.closest('.image-container') ||
+                            img.closest('.classified-detail-image') ||
+                            img.closest('.classified-detail-slider');
+
+    return hasValidContainer;
   }
 
   // Yeni yardımcı metod
