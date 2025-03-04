@@ -26,9 +26,7 @@
     "resources": [
       "images/carstudio-ai.gif",
       "images/*",
-      "backgrounds/*",
-      "animations/*",
-      "lib/lottie.min.js"
+      "backgrounds/*"
     ],
     "matches": ["<all_urls>"]
   }],
@@ -41,16 +39,10 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["lib/lottie.min.js"],
-      "run_at": "document_start"
-    },
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "run_at": "document_end"
+      "js": ["content.js"]
     }
   ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self' 'unsafe-eval'; object-src 'self'; connect-src https://api.carstudio.ai/* https://* http://*;"
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src https://api.carstudio.ai/* https://* http://*;"
   }
 } 
