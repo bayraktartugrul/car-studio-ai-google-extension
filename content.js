@@ -85,11 +85,11 @@ class StudioProcessor {
     const coverSelectors = {
         'autoscout24': 'img',
         'sahibinden.com': '.classifiedDetailMainPhoto img:first-child, #bigPhotos img:first-child',
-        'arabam.com': '.listing-image-container img, .gallery-view-container img, .listing-item-image img, .image-container img, .classified-detail-image img, .classified-detail-slider img',
+        'arabam.com': '.listing-image-container img, .gallery-view-container img, .listing-item-image img',
         'cars.com': '.modal-slideshow__image:first-child',
         'mobile.de': '.gallery-img:first-child',
         'cars24.com': '.gallery-image img, .car-image img, .vehicle-image img',
-        'facebook.com': 'img[src*="scontent"]'
+        'facebook.com': '[data-imgperflogname] img, [role="main"] img, [role="article"] img, .x1qjc9v5 img, .x9f619 img.x1lliihq'
     };
 
     // Arabam.com için özel kontrol
@@ -117,6 +117,34 @@ class StudioProcessor {
                 this.detectedImages.add(img);
                 this.prepareContainer(img);
             }
+        });
+        return;
+    }
+
+    // Facebook Marketplace için özel kontrol
+    if (currentHost.includes('facebook.com') && window.location.pathname.includes('/marketplace')) {
+        console.log('Facebook Marketplace tespit edildi');
+        
+        // Facebook'un dinamik yükleme yapısı için gözlemci
+        const observer = new MutationObserver(this.debounce(() => {
+            const images = document.querySelectorAll(coverSelectors['facebook.com']);
+            console.log('Facebook resimleri bulundu:', images.length);
+            
+            images.forEach(img => {
+                if (!this.detectedImages.has(img) && this.isValidFacebookImage(img)) {
+                    console.log('Facebook resmi işleniyor:', img.src);
+                    img.classList.add('car-cover-image');
+                    this.detectedImages.add(img);
+                    this.prepareContainer(img);
+                }
+            });
+        }, 1000));
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['src', 'class']
         });
         return;
     }
@@ -526,6 +554,47 @@ class StudioProcessor {
     ];
 
     return validUrlPatterns.some(pattern => img.src.toLowerCase().includes(pattern));
+  }
+
+  // Facebook Marketplace için özel resim doğrulama
+  isValidFacebookImage(img) {
+    // 1. Resim yüklenme kontrolü
+    if (!img.complete || !img.naturalWidth) {
+        img.onload = () => this.detectCarImages();
+        return false;
+    }
+
+    // 2. Minimum boyut kontrolü
+    if (img.naturalWidth < 200 || img.naturalHeight < 150) {
+        return false;
+    }
+
+    // 3. Parent element kontrolü
+    const validParents = [
+        '[role="article"]',
+        '[role="main"]',
+        '.x1qjc9v5', // Facebook'un araç listesi container class'ı
+        '.x9f619',   // Facebook'un resim container class'ı
+        '[data-imgperflogname]' // Facebook'un resim performans attribute'u
+    ];
+
+    const hasValidParent = validParents.some(selector => img.closest(selector));
+    if (!hasValidParent) return false;
+
+    // 4. URL ve context kontrolü
+    const contextText = (
+        img.alt.toLowerCase() + ' ' +
+        img.getAttribute('aria-label')?.toLowerCase() + ' ' +
+        img.closest('[role="article"]')?.textContent.toLowerCase()
+    );
+
+    const carKeywords = [
+        'car', 'auto', 'vehicle', 'araç', 'araba', 'otomobil',
+        'sedan', 'suv', 'truck', 'pickup', 'van', 'wagon',
+        'marketplace', 'vehicles', 'satılık', 'kiralık'
+    ];
+
+    return carKeywords.some(keyword => contextText?.includes(keyword));
   }
 }
 
